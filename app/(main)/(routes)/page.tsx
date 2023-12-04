@@ -1,4 +1,5 @@
-import { UserButton } from "@clerk/nextjs/app-beta";
+import { ModeToggle } from "@/components/mode-toggle";
+import { UserButton } from "@clerk/nextjs";
 
 export default function Home() {
   return (
@@ -6,6 +7,7 @@ export default function Home() {
       <UserButton 
         afterSignOutUrl="/"
         />
+      <ModeToggle />
     </div>
   )
 }
