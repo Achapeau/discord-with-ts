@@ -23,7 +23,7 @@ export async function DELETE(
     }
 
     if (!params.channelId) {
-      return new NextResponse("Channel ID missin", { status: 400 });
+      return new NextResponse("Channel ID missing", { status: 400 });
     }
 
     const server = await db.server.update({
