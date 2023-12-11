@@ -1,5 +1,6 @@
-import { NextApiResponseServerIo } from "@/types";
 import { NextApiRequest } from "next";
+
+import { NextApiResponseServerIo } from "@/types";
 import { currentProfilePages } from "@/lib/current-profile-pages";
 import { db } from "@/lib/db";
 
@@ -85,13 +86,13 @@ export default async function handler(
       },
     });
 
-    const channelKey = `chat:${channelId}:message`;
+    const channelKey = `chat:${channelId}:messages`;
 
     res?.socket?.server?.io?.emit(channelKey, message);
 
     return res.status(200).json(message);
   } catch (err) {
-    console.error("[MESSAGE_POST", err);
+    console.error("[MESSAGES_POST", err);
     return res.status(500).json({ message: "Internal Error" });
   }
 }

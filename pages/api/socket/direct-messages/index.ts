@@ -87,13 +87,13 @@ export default async function handler(
       },
     });
 
-    const channelKey = `chat:${conversationId}:message`;
+    const channelKey = `chat:${conversationId}:messages`;
 
     res?.socket?.server?.io?.emit(channelKey, message);
 
     return res.status(200).json(message);
   } catch (err) {
-    console.error("[DIRECT_MESSAGE_POST", err);
+    console.error("[DIRECT_MESSAGES_POST", err);
     return res.status(500).json({ message: "Internal Error" });
   }
 }
