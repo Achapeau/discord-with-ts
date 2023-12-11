@@ -1,5 +1,17 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+## External tools
+
+For this application, I needed to use 3 web management applications:
+
+[Planet Scale](https://planetscale.com)
+
+[Clerk](https://clerk.com)
+
+[LiveKit](https://livekit.io)
+
+Don't hesitate to ask about their use
+
 ## Getting Started
 
 First, run the development server:
