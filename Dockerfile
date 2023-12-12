@@ -7,7 +7,8 @@ WORKDIR /app
 
 # Install dependencies based on the preferred package manager
 COPY package.json package-lock.json
-RUN npm i
+RUN npm install -g npm@10.2.5
+RUN npm install
 
 # Rebuild the source code only when we needed
 FROM base AS builder
