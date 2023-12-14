@@ -39,11 +39,11 @@ import {
   DropdownMenuSubTrigger,
 } from "@/components/ui/dropdown-menu";
 
-// const roleIconMap = {
-//   "GUEST": null,
-//   "MODERATOR": <ShieldCheck className=' h-4 w-4 ml-2 text-indigo-500' />,
-//   "ADMIN": <ShieldAlert className='h-4 w-4 text-rose-500' />,
-// };
+const roleIconMap = {
+  "GUEST": null,
+  "MODERATOR": <ShieldCheck className=' h-4 w-4 ml-2 text-indigo-500' />,
+  "ADMIN": <ShieldAlert className='h-4 w-4 text-rose-500' />,
+};
 
 export const MembersModal = () => {
   const router = useRouter();
@@ -115,13 +115,8 @@ export const MembersModal = () => {
               <div className='flex flex-col gap-y-1'>
                 <div className='text-xs font-semibold flex items-center gap-x-1'>
                   {member.profile.name}
-                  {/* {roleIconMap[member.role]} */}
-                  {member.role === "ADMIN" && (
-                    <ShieldAlert className='h-4 w-4 text-rose-500' />
-                  )}
-                  {member.role === "MODERATOR" && (
-                    <ShieldCheck className=' h-4 w-4 ml-2 text-indigo-500' />
-                  )}
+                  {roleIconMap[member.role]}
+                  
                 </div>
                 <p className='text-xs text-zinc-500'>{member.profile.email}</p>
               </div>
