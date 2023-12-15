@@ -1,55 +1,44 @@
 FROM node:18-alpine AS base
 
 # Install dependencies only when needed
-FROM base AS DEPS
+FROM base AS deps
+# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 # Install dependencies based on the preferred package manager
-COPY package.json package-lock.json
+COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
 RUN \
-    if [ -f package-lock.json ]; then npm ci; \
+    if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
+    elif [ -f package-lock.json ]; then npm ci; \
+    elif [ -f pnpm-lock.yaml ]; then yarn global add pnpm && pnpm i --frozen-lockfile; \
     else echo "Lockfile not found." && exit 1; \
     fi
 
-# Rebuild the source code only when we needed
+
+# Rebuild the source code only when needed
 FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Build
+# Next.js collects completely anonymous telemetry data about general usage.
+# Learn more here: https://nextjs.org/telemetry
+# Uncomment the following line in case you want to disable telemetry during the build.
+ENV NEXT_TELEMETRY_DISABLED 1
+
+# RUN yarn build
+
+# If using npm comment out above and use below instead
 RUN npm run build
 
 # Production image, copy all the files and run next
 FROM base AS runner
 WORKDIR /app
 
-ENV MODE_ENV production
-ARG NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=${NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
-ENV NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=${NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
-ARG CLERK_SECRET_KEY=${CLERK_SECRET_KEY}
-ENV CLERK_SECRET_KEY=${CLERK_SECRET_KEY}
-ARG NEXT_PUBLIC_CLERK_SIGN_IN_URL=${NEXT_PUBLIC_CLERK_SIGN_IN_URL}
-ENV NEXT_PUBLIC_CLERK_SIGN_IN_URL=${NEXT_PUBLIC_CLERK_SIGN_IN_URL}
-ARG NEXT_PUBLIC_CLERK_SIGN_UP_URL=${NEXT_PUBLIC_CLERK_SIGN_UP_URL}
-ENV NEXT_PUBLIC_CLERK_SIGN_UP_URL=${NEXT_PUBLIC_CLERK_SIGN_UP_URL}
-ARG NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=${NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL}
-ENV NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=${NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL}
-ARG NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=${NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL}
-ENV NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=${NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL}
-ARG DATABASE_URL=${DATABASE_URL}
-ENV DATABASE_URL=${DATABASE_URL}
-ARG UPLOADTHING_SECRET=${UPLOADTHING_SECRET}
-ENV UPLOADTHING_SECRET=${UPLOADTHING_SECRET}
-ARG UPLOADTHING_APP_ID=${UPLOADTHING_APP_ID}
-ENV UPLOADTHING_APP_ID=${UPLOADTHING_APP_ID}
-ARG LIVEKIT_API_KEY=${LIVEKIT_API_KEY}
-ENV LIVEKIT_API_KEY=${LIVEKIT_API_KEY}
-ARG LIVEKIT_API_SECRET=${LIVEKIT_API_SECRET}
-ENV LIVEKIT_API_SECRET=${LIVEKIT_API_SECRET}
-ARG NEXT_PUBLIC_LIVEKIT_URL=${NEXT_PUBLIC_LIVEKIT_URL}
-ENV NEXT_PUBLIC_LIVEKIT_URL=${NEXT_PUBLIC_LIVEKIT_URL}
+ENV NODE_ENV production
+# Uncomment the following line in case you want to disable telemetry during runtime.
+ENV NEXT_TELEMETRY_DISABLED 1
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
@@ -71,7 +60,7 @@ EXPOSE 3000
 
 ENV PORT 3000
 # set hostname to localhost
-ENV HOSTNAME=${HOSTNAME}
+ENV HOSTNAME "0.0.0.0"
 
 # server.js is created by next build from the standalone output
 # https://nextjs.org/docs/pages/api-reference/next-config-js/output
