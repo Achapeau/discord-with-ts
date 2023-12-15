@@ -51,7 +51,7 @@ export const LeaveServerModal = () => {
           <DialogDescription className='text-center text-zinc-500'>
             Are you sure you want to leave 
             <span className='font-semibold text-indigo-500'>
-              {server?.name}
+            {server?.name} 
             </span>
             ?
           </DialogDescription>

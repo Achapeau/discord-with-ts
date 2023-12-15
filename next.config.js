@@ -4,7 +4,9 @@ const nextConfig = {
     config.externals.push({
       "utf-8-validate": "commonjs utf-8-validate",
       bufferutil: "commonjs bufferutil",
+      output: "standalone",
     });
+
     return config;
   },
   images: {
@@ -12,7 +14,4 @@ const nextConfig = {
   },
 };
 
-module.exports = {
-  nextConfig,
-  output: "standalone",
-};
+module.exports = nextConfig;
